@@ -1,0 +1,22 @@
+import psycopg2
+
+def store_passwords(password, email, user, url, app_name):
+    try:
+        conn = psycopg2.connect(user='postgres', password='P!gsheep1234', host = '127.0.0.1', database='password')
+        cursor = conn.cursor()
+        insert = ''' INSERT INTO accounts(password, email, username, url, app_name) VALUES(%s,%s,%s,%s,%s) '''
+        record = ()
+        cursor.execute(insert, record)
+        conn.commit(password, email, user, url, app_name)
+        count = cursor.rowcount
+        print(count, 'record inserted')
+    except(Exception, OSError) as err:
+        print(err)
+        
+def verify_master_password():
+    try:
+        conn = psycopg2.connect(user='postgres', password='P!gsheep1234', host = '127.0.0.1', database='password')
+        conn.close()                   # Close the connection if successful
+        return True
+    except psycopg2.OperationalError:
+        return False
