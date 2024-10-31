@@ -1,5 +1,6 @@
 from passmanager import store_passwords, verify_master_password
 from passmanagerfunctions import password, send_email
+from menu import menu, create, find, find_accounts
 import secrets
 
 # Generate a random token for two-factor authentication
@@ -25,20 +26,4 @@ else:
     print("Login Failed")
     exit()
 
-# Collect user inputs to create and store a new password entry
-txt = input("Please provide an easy password for this site:\n")
-app_name = input("Please provide the name of the site:\n").lower()
 
-# Generate a strong password based on the easy password and site name
-password = password(txt, app_name, 12)
-
-# Get additional details for the password entry
-email = input("Please provide the email:\n")
-user = input("Please provide the username if applicable:\n")
-if user == None:  # If no username is provided, default to an empty string
-    user = ''
-url = input('Please paste the url:\n')
-
-# Store the new password and related details in the database
-store_passwords(password, email, user, url, app_name)
-print('Password stored in database!')
