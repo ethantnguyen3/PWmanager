@@ -26,4 +26,19 @@ else:
     print("Login Failed")
     exit()
 
+while choice.upper() != 'Q':
+    choice = menu()
+    if choice == '1':
+        create()
+    elif choice == '2':
+        find_accounts()
+    elif choice == '3':
+        find()
+    else:
+        print("Invalid option. Please select a valid menu option.") 
+        continue 
+
+print("Exiting the program. Goodbye!")
+
+
 
