@@ -2,21 +2,40 @@ import psycopg2
 
 def store_passwords(password, email, user, url, app_name):
     try:
-        conn = psycopg2.connect(user='postgres', password='P!gsheep1234', host = '127.0.0.1', database='password')
-        cursor = conn.cursor()
-        insert = ''' INSERT INTO accounts(password, email, username, url, app_name) VALUES(%s,%s,%s,%s,%s) '''
-        record = ()
-        cursor.execute(insert, record)
-        conn.commit(password, email, user, url, app_name)
-        count = cursor.rowcount
-        print(count, 'record inserted')
-    except(Exception, OSError) as err:
-        print(err)
+        # Connect to the PostgreSQL database
+        conn = psycopg2.connect(user='postgres', password='P!gsheep1234', host='127.0.0.1', database='password')
+        cursor = conn.cursor()  # Create a cursor object to interact with the database
         
+        # SQL query to insert a new record into the 'accounts' table
+        insert = ''' INSERT INTO accounts(password, email, username, url, app_name) VALUES(%s, %s, %s, %s, %s) '''
+        
+        # Tuple containing the values to be inserted
+        record = (password, email, user, url, app_name)
+        
+        # Execute the insert query with the provided values
+        cursor.execute(insert, record)
+        
+        # Commit the transaction to save changes in the database
+        conn.commit()
+        
+        # Get the number of rows affected by the query
+        count = cursor.rowcount
+        print(count, 'record inserted')  # Print confirmation of insertion
+    except (Exception, OSError) as err:
+        print(err)  # Print error if the database operation fails
+    finally:
+        # Close the database connection to free up resources
+        if conn:
+            cursor.close()
+            conn.close()
+
 def verify_master_password():
     try:
-        conn = psycopg2.connect(user='postgres', password='P!gsheep1234', host = '127.0.0.1', database='password')
-        conn.close()                   # Close the connection if successful
-        return True
+        # Try connecting to the PostgreSQL database to verify the master password
+        conn = psycopg2.connect(user='postgres', password='P!gsheep1234', host='127.0.0.1', database='password')
+        
+        # Close the connection immediately if it succeeds
+        conn.close()
+        return True  # Return True if the connection is successful
     except psycopg2.OperationalError:
-        return False
+        return False  # Return False if there is an operational error, indicating failure
