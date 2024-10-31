@@ -84,20 +84,3 @@ def find_accounts():
         return
     find_users(user_email)
 
-def main():
-    # Main loop for handling menu actions
-    while True:
-        choice = menu()
-        if choice == '1':
-            create()
-        elif choice == '2':
-            find_accounts()
-        elif choice == '3':
-            find()
-        elif choice.upper() == 'Q':
-            print("Exiting the program. Goodbye!")
-            break
-        else:
-            print("Invalid option. Please select a valid menu option.")
-
-
