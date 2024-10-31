@@ -3,43 +3,67 @@ import random
 import secrets
 import smtplib
 from email.mime.text import MIMEText
-from selenium import webdriver
+# from selenium import webdriver  # Selenium commented out as it's not used
 import time
+
+# Generate a secure, random 32-byte hexadecimal key for hashing passwords
 KEY = secrets.token_hex(32)
-def send_email(token, recipient_email, passw):
-    sender_email = recepient_email  # Replace with your email
-    sender_password = "pigsheep123" # later replace with email automation
+
+def send_email(token, recipient_email):
+    # Set sender email and password (ideally this should be stored securely)
+    sender_email = 'jeremywind7@gmail.com'
+    sender_password = "yfkf rmmm zqbw pqwb"  # Temporary password; replace with a hashed one in production
+    
+    # Compose email subject and body with the generated token
     subject = "Your Secret Token"
     body = f"Your generated token is: {token}"
 
+    # Create the MIMEText email object
     msg = MIMEText(body)
     msg['Subject'] = subject
     msg['From'] = sender_email
     msg['To'] = recipient_email
 
+    # Try to send the email using Gmail's SMTP server
     try:
-        with smtplib.SMTP_SSL('smtp.example.com', 465) as server:  # Replace with your SMTP server and port
-            server.login(sender_email, sender_password)
-            server.sendmail(sender_email, recipient_email, msg.as_string())
+        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as server:  # Use SMTP_SSL for secure connection
+            server.login(sender_email, sender_password)  # Log in to the email server
+            server.sendmail(sender_email, recipient_email, msg.as_string())  # Send email
         print("Email sent successfully!")
     except Exception as e:
-        print(f"Failed to send email: {e}")
+        print(f"Failed to send email: {e}")  # Print error if email sending fails
 
 def make_password(txt, app_name):
+    # Generate a unique salt for each app using the app name and key
     salt = get_hexdigest(KEY, app_name)[:20]
+    # Generate hash using the salt and user-provided text (password input)
     hsh = get_hexdigest(salt, txt)
+    # Return combined salt and hash as the final password
     return ''.join(salt, hsh)
 
 def get_hexdigest(salt, txt):
-    return sha256(salt + txt).hexdigest()
+    # Create a SHA-256 hash of the salt combined with the input text
+    return sha256((salt + txt).encode('utf-8')).hexdigest()
 
 def password(txt, app_name, length):
+    # Create raw hexadecimal password hash based on text and app name
     raw_hex = make_password(txt, app_name)
-    CHARACTER = ('qwertyuiopasdfghjklzxcvbnm', 'QWERTYUIOPASDFGHJKLZXCVBNM', '1234567890', '!@#$%^&*()_+-=[]{}\|;:,.<>?/~`')
+    
+    # Define character categories for password complexity
+    CHARACTER = ('qwertyuiopasdfghjklzxcvbnm',  
+                 'QWERTYUIOPASDFGHJKLZXCVBNM',  
+                 '1234567890',  # Digits
+                 '!@#$%^&*()_+-=[]{}\\|;:,.<>?/~`')  
+    
+    # Convert hexadecimal string to an integer for indexing characters
     num = int(raw_hex, 16)
     num_chars = len(CHARACTER)
     chars = []
+
+    # Generate the password by choosing characters based on the hexadecimal integer
     while len(chars) < length:
-        num, idx = divmod(num, num_chars)
-        chars.append(CHARACTER[idx])
+        num, idx = divmod(num, num_chars)  # Divide num to get index within CHARACTER
+        chars.append(CHARACTER[idx])  # Add character from CHARACTER at idx to password
+
+    # Join characters to create the final password
     return ''.join(chars)
